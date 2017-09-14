@@ -1,0 +1,67 @@
+# PROGRAMOWANIE #
+python3			- uruchomienie w terminalu pisania komend w pythonie wersja 3
+python3 "program.py"	- uruchomienie w terminalu programu o danej nazwie i ścieżce
+x = input("tekst")	- wpisywanie danych z klawiatury do zmiennej 'x'
+str(25)			- konwersja liczby 25 na łańcuch string
+int("-145")		- konwersja napisu "-145" na liczbę int (-145)
+int("1001", 2)		- konwersja na liczbę int z napisu w systemie dwujkowym
+float("254.15")		- konwersja napisu "254.15" na liczbę float	
+len("tekst")		- zwraca długość łańcucha "tekst"	
+s.find("def")		- szuka w łąńcuchu znaków (s) tekstu "def" i zwraca pozycję pierwszegop znaku
+s[1:5]			- skopjowanie z łąńcucha (s) tekstu na pozycji od 1 do 5, wartość ujemna indeks odlicza od końca pliku
+s.replace("X", "lata")	- w łańcuchu (s) zamienia znak "X" na łańcuch znakóœ "lata"
+s.upper()		- zamiana w łańcuchu (s) wszystkich znaków na wielkie litery
+s.lower()		- zamiana w łańcuchu (s) wszystkich znaków na małe litery
+and, or, not		- operatory logiczne
+time.sleep(1)		- funkcja opóźnienia (trzeba dać import time)
+
+# FUNKCJE #
+def liczba_losowa(a = 0, b = 10): - definicja funkcji ( operator przypisania = pozwala na dodanie wartości domyślnej parametrów funkcji)
+
+# LISTY #
+lista = ["a", 12, 2.6]	- zdefiniowana lista (wartości mogą być różnego typu)
+lista.append("a")	- wstawienie "a" na koniec listy
+lista.insert(2, "s")	- wstawienie "s" na miejsce 2 w liście
+lista1.extend(lista2)	- dodaje na koniec listy1 wszystkie elementy listy2
+lista.pop(0)		- usuwa zerowy element listy, zwraca wartosc znajdującą się w tym miejscu
+lista.pop()		- usuwa ostatni element listy
+"a b c".split()		- dzielenie wyrazu na elementy listy [a, b, c]
+"a-b-c".split('-')	- dzielenie na elementy pojedyńcze elementy listy oddzielone znakiem '-'	 
+for x in lista		- x przyjmuje z każdym przejściem pętli następną wartość listy
+for (i, x) in enumerate(lista) - zwraca gdzie leży element listy i wartość elementu
+for i in range(len(lista)) - działa podobnie co poprzednio
+lista2 = copy.copy(lista) - kopjuje listę (wymaga import copy)
+lista.sort()		- sortuje listę (tylko string może być w liście)
+lista[1:5]		- wyciąganie fragmentu listy (ostatni element [5] nie jest kopiowany)
+
+# SŁOWNIKI #
+slow = {"a":23, "s":43}	- tworzenie slownika
+slow["a"]		- uzyskiwanie dostępu do elementu słownika
+slow.pop("a")		- wyrzucenie elementu "a" ze slownika, zwraca wartosc pod elementem
+for x in slow:		- iterecja elementów słownika
+for (x, y) in slow.items() - iteracja zarówno nazw w słowniku jak i wartości
+
+# ZŁOŻENIA #
+[x.upper() for x in lista] - zest to złożenie [], funkcja upper() wykonana będzie dla każdego elementu listy lista
+
+# DZIAŁANIA NA PLIKACH #
+f = open("plik.txt", "r+w") - otwarcie pliku w trubie odczytu i zapisu
+"a"			- tryb dopisywanioa na końcu pliku tekstu
+f.write("tekst")	- wpisanie do pliku tekstu
+f.close			- zamknięcie pliku. BARDZO WAŻNE!!!
+f.read()		- odczytanie danych z otwartego pliku
+f.readline()		- odczytanie całej linii z pliku
+
+# ZAPIS I ODCZYT STRUKTÓR Z PLIKU (SEREALIZACJA) #
+import pickle		- potrzebna biblioteka
+lista = [3, 54, 'a']	- przykładowa lista
+f = open("lista.pickle", 'wb') - utworzenie pliku z rozszerzeniem pickle (b PRZY wb BARDZO WAŻNE!!!)
+pickle.dump(lista, f)	- zrzucenie informacji o liście do pliku f (lista.pickle)
+cos = pickle.load(f)  	- wczytanie danych o liście z pliku f (lista.pickle) do listy cos 
+
+# WYJĄTKI #
+try:			- próba wykonania operacji
+except:			- jeśli próba się nie uda wykonywana jest operacja except
+except IOError:		- jeśli operacja typu IOError się nie uda wykonywany jest wyjątek
+else:			- operacja wykonywana jeśli wyjątek nie zachodzi
+finally:		- zawsze wykonywana niezależnie czy wyjątek zachodzi czy nie

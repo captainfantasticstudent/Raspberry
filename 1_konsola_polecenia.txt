@@ -1,0 +1,57 @@
+# POLECENIA UPRAWNIEŃ #
+sudo		- podawane przed poleceniem. Wymusza uprawnienia administartora
+
+
+# POBIERANIE PLIKÓW Z INTERNETU #
+apt-get update		- instalacja i aktualizacja plików
+apt-get upgrade
+apt-get install "nazwa_programu"
+apt-get remove "nazwa_programu"
+apt-get autoremove	- najlepsza metoda usuwania
+apt-get clean		- po autoremove
+wget "adres URL"	- pobranie pliku z internetu (URS czasem trzeba podać w nawiasach "")
+git clone "URL"		- pobieranie kodu źródłowego z bazy GIT
+
+
+# POLECENIA NAWIGACJI W KONSOLI #
+pwd			- wyświetla aktualny katalog
+ls			- wyświetla listę plików/folderów  w aktualnym katalogu
+ls -a			- wyświetla listę plików wraz z plikami ukrytymi (-a)
+ls -l			- wyświetla listę plików/folderów  wraz z atrybutami
+ls f*			- wyświetla listę elementów na literę 'f' w danym katalogu ('*' - znak wielozacznika)
+ls *.docx		- wyślwietla listę plików o rozszerzeniu 'docx'
+cd "nazwa"		- polecenie zmiany katalogu (potem należy podać "nazwę" lub ścieżkę dostępu)
+cd ..			- powrót do nadrzędnego katalogu
+
+
+# EDYCJA PLIKÓW/FOLDERÓW #
+mkdir "nazwa"		- tworzenie folderu o danej nazwie w aktualnym katalogu
+cp "plik1" "nazwa2"	- kopjuj plik ("plik1") do innego pliku/folderu ("nazwa2")
+cp -r "folder1" "folder2" - kopjuje folder1 wraz z zawartością do folderu2 ('-r' - argument rekursywny pozwoli na kopię zawartości folderu)
+mv "plik1" "nazwa2"	- przeniesienie ("plik1") do innego folderu ("nazwa2"), lub zmiana nazwy pliku1 na "nazwę2" 
+nano "nazwa" 		- edycja pliku o danej nazwie i rozrszerzeniu. Jeśli nie istnieje - tworzenie pliku
+more "nazwa"		- wyświetla zawartość pliku w konsoli bez możliwości jego edycji
+cat "nazwa"		- wyświetla całą zawartość pliku nawet jeśli nie mieści się on na ekranie
+cat "p1" "p2" > "plik"	- łączy pliki "p1" i "p2" i zapisuje w "plik"
+echo ""tekst"" > "plik"	- wpisuje "tekst" do pliku "plik", jeśli nie istnieje to go tworzy
+rm "nazwa"		- kasuje plik "nazwa"
+rm -r "katalog"		- kasuje kalalog o danej nazwie wraz z zawartością
+chmod			- modyfikacja uprawnień do pliku/folderu
+chown			- zmiana właściciela pliku
+
+
+# ARCHIWA #
+gunzip "archiwum.gz" 	- rozpakowanie archowum formatu gz
+tar -xzf "archiwum.tar.gz" - rozpakowanie pliku tar spakowanym gz
+
+
+# POZOSTAŁE #
+scrot			- zrzut ekranu
+scrot -d "liczba"	- opóźniowy o wartość "liczba" [sek.] zrzut ekranu
+scrot -s		- zrzut określonej części ekranu
+find "ścieżka" -name "nazwa" - wyszukiwanie pliku lub katalogu "name" w danym miejscu
+polecenie > /dev/null	- nie wyświetla komunikatów polecenia (przekierowyje je do dev/null)
+"program" &		- uruchomienie programu w tle np (python program.py &)
+kill -1 PID		- kończenie programu działającego w tle o danm numerze PID
+fg			- wyświetla proces wykonywany w tle (np. python program.py)
+lsusb			- wyświetlanie urządzeń usb podłączonych

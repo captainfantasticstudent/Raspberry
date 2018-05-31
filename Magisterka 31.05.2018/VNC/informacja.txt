@@ -1,0 +1,4 @@
+# Aby włączyć serwer VNC wystarczy w teminalu napisać -> tightvncserver
+# Można także uruchomić plik tightvncserver z /usr/bin, bądź uruchomić ten skrypt
+# Aby skrypt był uruchamiany automatycznie podczas startu systemu należy przenieść go do /etc/init.d/
+# Jest tez plik wykonywalny o nazwie "VNC" który robi to za nas 

@@ -1,0 +1,20 @@
+#!/bin/bash
+### RasPi
+### For Raspberry Pi Basic Congiguration
+### Autor: MalinowePi.pl
+### E-Mail: kontakt@malinowepi.pl
+### Wersja: 0.1
+
+sudo apt-get install tightvncserver
+cd ~
+rm tightvncserver
+curl -O http://cluster003.ovh.net/~haetlpva/blazej/malinowepi/scripts/RasPi/VNC/tightvncserver
+sudo chmod 755 tightvncserver
+sudo cp tightvncserver /etc/init.d/tightvncserver
+rm tightvncserver
+sudo update-rc.d tightvncserver defaults
+
+echo '
+!!!!
+Jesli Twoja nazwa uzytkownika jest inna niz "pi" - ustaw "export USER=[Nasza Nazwa Użytkownika]" w pliku "/etc/init.d/tightvncserver"
+!!!!'

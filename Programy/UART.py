@@ -1,14 +1,20 @@
 import time
 import serial
 
-ser = serial.Serial("/dev/ttyUSB1")	#Przypisanie przejściówki UART podłączonej do wejścia USB (lista urządzeń komendą "dmesg | grep tty" bądź "ls -l dev/")
-ser.baundrate = 9600
+end = 0     #zmienna oznaczająca warunkowe zatrzymanie programu
 
-while 1:
-    zmienna = 123231			#zmienna do wypisania przez UART
-    zmienna1 = str(zmienna)		#zamiana zmiennej na łańcuch znaków
+try:
+    ser = serial.Serial("/dev/ttyUSB0")	#Przypisanie przejściówki UART podłączonej do wejścia USB (lista urządzeń komendą "dmesg | grep tty" bądź "ls -l dev/")
+    ser.baundrate = 9600
+    print("Konfiguracja USBtty poprawna")
+except:
+    print("Konfiguracja USBtty nieudana, sprawdź ustawienia")
+    end = 1
+
+while (end == 0):
+    print("Data to send: ")
+    zmienna1 = input()
     zmienna1 = zmienna1 + '\n'		#dodanie znaku końca linii
-    print(zmienna1)			#wypisz progilaktycznie w konsoli zmienną
     ser.write(zmienna1.encode())	#wypisz zmienną poprzez UART
-    time.sleep(1)
+    print('Send data: ', zmienna1)	#wypisz profilaktycznie w konsoli zmienną
         

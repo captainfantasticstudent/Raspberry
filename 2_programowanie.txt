@@ -9,7 +9,7 @@ float("254.15")		- konwersja napisu "254.15" na liczbę float
 len("tekst")		- zwraca długość łańcucha "tekst"	
 s.find("def")		- szuka w łąńcuchu znaków (s) tekstu "def" i zwraca pozycję pierwszegop znaku
 s[1:5]			- skopjowanie z łąńcucha (s) tekstu na pozycji od 1 do 5, wartość ujemna indeks odlicza od końca pliku
-s.replace("X", "lata")	- w łańcuchu (s) zamienia znak "X" na łańcuch znakóœ "lata"
+s.replace("X", "lata")	- w łańcuchu (s) zamienia znak "X" na łańcuch znaków "lata"
 s.upper()		- zamiana w łańcuchu (s) wszystkich znaków na wielkie litery
 s.lower()		- zamiana w łańcuchu (s) wszystkich znaków na małe litery
 and, or, not		- operatory logiczne

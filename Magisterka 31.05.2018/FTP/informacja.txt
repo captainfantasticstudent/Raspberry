@@ -1,0 +1,3 @@
+# Aby włączyć serwer FTP wystarczy w teminalu napisać -> sudo proftpd
+# Aby skrypt był uruchamiany automatycznie podczas startu systemu należy przenieść go ("proftpd") do /etc/init.d/
+# następnie: update-rc.d proftpd remove; update-rc.d proftpd defaults

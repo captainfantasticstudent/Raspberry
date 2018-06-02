@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="pl">
+	<head>
+		<meta charset="utf-8" />
+		<title>ZGRZEWANIE</title>
+		<meta name="description" content="Serwer zajmujący się zbieraniem danych o zgrzewarce" />
+		<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+		
+		<link href="style.css" rel="stylesheet" type="text/css" />
+		<link href="css/fontello.css" rel="stylesheet" type="text/css" />
+		<link href="https://fonts.googleapis.com/css?family=Josefin+Sans|Lato&amp;subset=latin-ext" rel="stylesheet">
+		
+		<script src="timer.js"></script>
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/2.2.0/jquery.min.js"></script>	
+	
+		<script src="jquery.scrollTo.min.js"></script>
+		
+		<script>
+			
+			jQuery(function($)
+			{
+				//zresetuj scrolla
+				$.scrollTo(0);
+		
+				$('.scrollup').click(function() { $.scrollTo($('body'), 1000); });
+			}
+			);
+			
+			//pokaż podczas przewijania
+			$(window).scroll(function()
+			{
+				if($(this).scrollTop()>300) $('.scrollup').fadeIn();
+				else $('.scrollup').fadeOut();		
+			}
+			);
+	
+	
+		</script>
+		
+	</head>
+
+	<body onload="odliczanie();">
+	
+		<a href="#" class="scrollup">UP</a>
+	
+		<div id="container2">
+			<div class="rectangle">
+				<div id="logo">
+					<a href="index.html" class="footerlink" style="color: #878787;">
+						David Pugett /
+					<a>
+					Zgrzewanie
+				</div>
+				<div id="zegar">13:41:47</div>
+				<div style="clear: both;"></div>
+			</div>
+			<!-- ##################### SPIS TREŚCI ##################### -->
+			<div id="spis">
+				<ol class="chapters">
+					<li><a href="#welding" class="footerlink">Welding</a></li>
+					<li><a href="#processes" class="footerlink">Processes</a>
+						<ul>
+							<li><a href="#processes"  class="footerlink">Arc</li>
+							<li><a href="#gas-welding"  class="footerlink">Gas welding</a></li>
+						</ul>
+					</li>
+					<li><a href="#glass-and-plastic-welding" class="footerlink">Glass and plastic welding</a>
+						<ul>
+							<li><a href="#glass-welding" class="footerlink">Glass welding</a></li>
+							<li><a href="#plastic-welding" class="footerlink">Plastic welding</a></li>
+						</ul>
+					</li>
+					<li><a href="#quality" class="footerlink">Quality</a></li>
+				</ol>
+			</div>
+		</div>
+		<!-- ##################### SLAJDY ##################### -->
+		<div class="slajd" id="welding">
+			<div class="titleS">
+				Welding
+			</div>
+			<div class="mainContent">
+				Welding is a fabrication or sculptural process that joins materials, usually metals or thermoplastics, by causing fusion, which is distinct from lower temperature metal-joining techniques such as brazing and soldering, which do not melt the base metal. In addition to melting the base metal, a filler material is typically added to the joint to form a pool of molten material (the weld pool) that cools to form a joint that is usually stronger than the base material. Pressure may also be used in conjunction with heat, or by itself, to produce a weld. Welding also requires a form of shield to protect the filler metals or melted metals from being contaminated or oxidized. </br> </br>
+				Although less common, there are also solid state welding processes such as friction welding or shielded active gas welding in which metal does not melt. <br/>
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="processes">
+			<div class="titleS">
+				Processes
+			</div>
+			<div class="titleS1">
+				Arc
+			</div>
+			<div class="mainContent">
+				These processes use a welding power supply to create and maintain an electric arc between an electrode and the base material to melt metals at the welding point. They can use either direct (DC) or alternating (AC) current, and consumable or non-consumable electrodes. The welding region is sometimes protected by some type of inert or semi-inert gas, known as a shielding gas, and filler material is sometimes used as well.
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="gas-welding">
+			<div class="titleS">
+				Processes
+			</div>
+			<div class="titleS1">
+				Gas welding
+			</div>
+			<div class="mainContent">
+				The most common gas welding process is oxyfuel welding,[13] also known as oxyacetylene welding. It is one of the oldest and most versatile welding processes, but in recent years it has become less popular in industrial applications. It is still widely used for welding pipes and tubes, as well as repair work.[13]
+
+				The equipment is relatively inexpensive and simple, generally employing the combustion of acetylene in oxygen to produce a welding flame 
+				temperature of about 3100 °C.[13] The flame, since it is less concentrated than an electric arc, causes slower weld cooling, which can 
+				lead to greater residual stresses and weld distortion, though it eases the welding of high alloy steels. A similar process, generally 	
+				called oxyfuel cutting, is used to cut metals.
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="glass-and-plastic-welding">
+			<div class="titleS">
+				Glass and plastic welding
+			</div>
+			<div class="mainContent">
+				Glasses and certain types of plastics are commonly welded materials. Unlike metals, which have a specific melting point, glasses and plastics have a melting range, called the glass transition. When heating the solid material into this range, it will generally become softer and more pliable. When it crosses through the glass transition, it will become a very thick, sluggish, viscous liquid. Typically, this viscous liquid will have very little surface tension, becoming a sticky, honey-like consistency, so welding can usually take place by simply pressing two melted surfaces together. The two liquids will generally mix and join at first contact. Upon cooling through the glass transition, the welded piece will solidify as one solid piece of amorphous material.
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="glass-welding">
+			<div class="titleS">
+				Glass and plastic welding
+			</div>
+			<div class="titleS1">
+				Glass welding
+			</div>
+			<div class="mainContent">
+				Glass welding is a common practice during glassblowing. It is used very often in the construction of lighting, neon signs, flashtubes, scientific equipment, and the manufacture of dishes and other glassware. It is also used during glass casting for joining the halves of glass molds, making items such as bottles and jars. Welding glass is accomplished by heating the glass through the glass transition, turning it into a thick, formable, liquid mass. Heating is usually done with a gas or oxy-gas torch, or a furnace, because the temperatures for melting glass are often quite high. This temperature may vary, depending on the type of glass. For example, lead glass becomes a weldable liquid at around 1,600 °F (870 °C), and can be welded with a simple propane torch. On the other hand, quartz glass (fused silica) must be heated to over 3,000 °F (1,650 °C), but quickly loses its viscosity and formability if overheated, so an oxyhydrogen torch must be used. Sometimes a tube may be attached to the glass, allowing it to be blown into various shapes, such as bulbs, bottles, or tubes
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="plastic-welding">
+			<div class="titleS">
+				Glass and plastic welding
+			</div>
+			<div class="titleS1">
+				Plastic welding
+			</div>
+			<div class="mainContent">
+				Plastics are generally divided into two categories, which are "thermosets" and "thermoplastics." A thermoset is a plastic in which a chemical reaction sets the molecular bonds after first forming the plastic, and then the bonds cannot be broken again without degrading the plastic. Thermosets cannot be melted, therefore, once a thermoset has set it is impossible to weld it. Examples of thermosets include epoxies, silicone, vulcanized rubber, polyester, and polyurethane.
+				Thermoplastics, by contrast, form long molecular chains, which are often coiled or intertwined, forming an amorphous structure without any long-range, crystalline order. Some thermoplastics may be fully amorphous, while others have a partially crystalline/partially amorphous structure. Both amorphous and semicrystalline thermoplastics have a glass transition, above which welding can occur, but semicrystallines also have a specific melting point which is above the glass transition. Above this melting point, the viscous liquid will become a free-flowing liquid (see rheological weldability for thermoplastics). Examples of thermoplastics include polyethylene, polypropylene, polystyrene, polyvinylchloride (PVC), and fluoroplastics like Teflon and Spectralon.
+				
+			</div>
+		</div>
+		
+		<div class="slajd" id="quality">
+			<div class="titleS">
+				Quality
+			</div>
+			<div class="mainContent">
+				Many distinct factors influence the strength of welds and the material around them, including the welding method, the amount and concentration of energy input, the weldability of the base material, filler material, and flux material, the design of the joint, and the interactions between all these factors.[47] To test the quality of a weld, either destructive or nondestructive testing methods are commonly used to verify that welds are free of defects, have acceptable levels of residual stresses and distortion, and have acceptable heat-affected zone (HAZ) properties. Types of welding defects include cracks, distortion, gas inclusions (porosity), non-metallic inclusions, lack of fusion, incomplete penetration, lamellar tearing, and undercutting.
+				
+			</div>
+		</div>
+		
+		
+
+	</body>
+</html>

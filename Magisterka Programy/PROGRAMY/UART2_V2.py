@@ -287,6 +287,15 @@ while(end == 0):                                                        #jesli i
                     clearUARTbuf()                                              #profilaktycznie wyczyść bufor danych
                     licznik_UART = 0                                            #zerój licznik bajtów odebranych
                     toMe = 0                                        #zerój zmienną mówiącą o wiadomości skierowanej do mnie
+
+                elif tab_UART[4] == b'z' and tab_UART[3] == b'z' and tab_UART[2] == b'z':
+                    SQLwrite('START', '0', 'Bb')                           #flaga START zerowana w bazie
+                    print("$ REINICJALIZACJA ZGRZEWARKI")           #potwierdzenie startu zgrzewarki
+                    for x in range(liczba_parametrow):
+                        resend(x) = 1
+                    clearUARTbuf()                                              #profilaktycznie wyczyść bufor danych
+                    licznik_UART = 0                                            #zerój licznik bajtów odebranych
+                    toMe = 0                                        #zerój zmienną mówiącą o wiadomości skierowanej do mnie
                 else:                                   #jeśli dane do niczego nie pasują
                     print(tab_UART)                     #wypisz odebrane błędnie dane
                     print("! uC odebrał dane błędnie")  #info o źle odebranych danych
@@ -335,26 +344,13 @@ while(end == 0):                                                        #jesli i
             #po numerze odebranego parametru rozpoznawana jest i podejmowana określona akcja na uC
             if(count == 0):                                     #jeśli do sprawdzenia parametr 0 ->PWM
                 #print("~~~~Count 0~~~~")
-                if SQLdata < 10 and SQLdata >= 0:               #formatowanie odpowiednio odczytanych danych  włąńcuch string
+                if SQLdata < 10 and SQLdata >= 0:               #formatowanie odpowiednio odczytanych danych  w łańcuchy string
                     dane = "000" + str(SQLdata) + "0"
                 elif SQLdata < 100  and SQLdata > 0:
                     dane = "00" + str(SQLdata) + "0"
                 else:
                     dane = "00000"
                     print("! ERROR. Niepoprawny format danych") #info o tym że dane niepoerawne
-##                if values[count] != dane  or resend[count] == 1:#jeśli dane z BAZY != ostatnio wysłane dane lub resend wyśli jane
-##                    values[count] = dane                        #ostatnie dane = nowo odczytane dane
-##                    daneSTR = "Bb" + values[count] + "0"       #utwórz łąńcuch odpowiedni
-##                    print("# wysłano do uC PWM: " + daneSTR)    #info o wysłaniu danych
-##                    sesr.write(daneSTR.encode())                 #wysyłanie danych przez UART do uC
-##                    confirm_need[count] = 1                     #flaga żądania potwierdzenia
-##                    SQLwrite('GOTOWE', '0', 'Bb')               #ustawienie niegotowości zgrzewarki
-##                    ready = 0                                   #flaga gotowości zerowana
-##                    print("# Oczekiwanie na odpowiedź uC")      #wiadomość do użytkownika
-##                    resend[count] = 0                           #flaga potrzeby ponownego wysłania zerowana
-##                    czas1 = czas                                #ustawienie czasu oczekiwania na odpowiedź na odpowiednim poziomie
-##                else:
-##                    count = 1                                   #jeśli dane takie same przejdź dalej w następnej pętli programu
             elif(count == 1):
                 #print("~~~~Count 1~~~~")                       #Sytuacja tego samego typu co powyżej
                 if SQLdata < 10 and SQLdata >= 0:               #jedyną różnicą przedrostek liczbowy w wiadomości
@@ -409,35 +405,35 @@ while(end == 0):                                                        #jesli i
                     dane = "50000"
                     print("! ERROR. Niepoprawny format danych")
             
-            if values[count] != dane  or resend[count] == 1:
-                values[count] = dane
-                daneSTR = "Bb" + values[count]
-                print("# wysłano do uC sygnał: " + daneSTR)
-                send_data(daneSTR)      
-                confirm_need[count] = 1
-                SQLwrite('GOTOWE', '0', 'Bb')
-                ready = 0
-                print("# Oczekiwanie na odpowiedź uC")
-                resend[count] = 0
-                czas1 = czas
+            if values[count] != dane  or resend[count] == 1:    #jeśli dane z BAZY != ostatnio wysłane dane lub resend wyślij dane
+                values[count] = dane                            #zapisanie w pamięciu nowej wartości 
+                daneSTR = "Bb" + values[count]                  #utwórz odpowiedni łąńcuch
+                print("# wysłano do uC sygnał: " + daneSTR)     #info o wysłaniu danych
+                send_data(daneSTR)                              #wysyłanie danych przez UART do uC
+                confirm_need[count] = 1                         #flaga żądania potwierdzenia
+                SQLwrite('GOTOWE', '0', 'Bb')                   #ustawienie niegotowości zgrzewarki
+                ready = 0                                       #flaga gotowości zerowana
+                print("# Oczekiwanie na odpowiedź uC")          #wiadomość do użytkownika
+                resend[count] = 0                               #flaga potrzeby ponownego wysłania zerowana
+                czas1 = czas                                    #ustawienie czasu oczekiwania na odpowiedź na odpowiednim poziomie
             else:
                 count = count + 1
                 if (count == liczba_parametrow):
                     count = 0
-                    #po sprawdzeniu wszystkich możlwości nadchodzi moment sprawdzenia czy wszystkie wartości są prawidłowe i wpisane
+                    #sprawczenie czy zgrzewarka jest gotowa oraz czy wpisane do zmiennych wartości są prawidłowe
                     if (confirm_need[0] == 0 and confirm_need[1] == 0 and confirm_need[2] == 0 and confirm_need[3] == 0 and confirm_need[4] == 0 and confirm_need[5] == 0
                         and int(values[0]) > 0 and int(values[1]) > 1000 and int(values[2]) > 1999 and int(values[3]) > 2999 and int(values[4]) > 3999 and int(values[5]) > 4999
                         and ((int(values[3]) > (int(values[1]) + 2000)) or int(values[3]) == 3000)):
-                        SQLwrite('GOTOWE', '1' , 'Bb')              #jeśli tak pisz w bazę danych gotowość
-                        GPIO.output(LED1, 1)                           #dioda gotowości ON
-                        if ready == 0:                              #jeśli flaga gotowości = 0
-                            print("$ POTWIERDZENIE GOTOWOSCI ZGRZEWARKI")   #potwierdź gotowość
-                            ready = 1                               #ustaw flagę gotowości
+                        SQLwrite('GOTOWE', '1' , 'Bb')                          #jeśli tak pisz w bazę danych gotowość
+                        GPIO.output(LED1, 1)                                    #dioda gotowości ON
+                        if ready == 0:                                          #jeśli flaga gotowości = 0
+                            print("$ POTWIERDZENIE GOTOWOSCI ZGRZEWARKI")       #potwierdź gotowość
+                            ready = 1                                           #ustaw flagę gotowości
                     else:
-                        SQLwrite('GOTOWE', '0' , 'Bb')              #jeśli jeszcze nie wszystko wpisano/sprawdzono gotowość = 0
+                        SQLwrite('GOTOWE', '0' , 'Bb')                          #jeśli jeszcze nie wszystko wpisano/sprawdzono gotowość = 0
                         ready = 0
               
-        except:                                                         #jeśli nieudany odczyt wartości  z bazy danych
+        except:                                                                 #jeśli nieudany odczyt wartości  z bazy danych
             print("! ERROR. Nie wyslano nic do uC")
 
         #sprawdzanie flagi startu na podobnej zasadzie jak wyżej
@@ -452,7 +448,7 @@ while(end == 0):                                                        #jesli i
     time.sleep(0.1)     #oczekuj 100ms
     czas = czas + 0.1   #zwiększ czas który upłynął
 
-    if czas == 3600:
+    if czas == 3600:    #odlicznie czasu
         czasH = 1
         czas = 0
         czas1 = 0

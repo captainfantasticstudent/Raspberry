@@ -13,12 +13,12 @@ resend_START = 0                                #flaga powtórzenia wysłania wi
 ready = 0                                       #flaga gotowości programu
 
 ### zmienne potrzebne do ustawienia odpowiednich wartoci w mikrokontrolerze
-values = ['-', '-', '-', '-', '-', '-']              #val[0] -> PWM, val[1] -> czas, ...
-resend = [0, 0, 0, 0, 0, 0]                        #resend[0] -> PWM, resend[1] -> czas, ...
-confirm_need = [0, 0, 0, 0, 0, 0]                  #cf[0] -> PWM, cf[1] -> czas, ...
+values = ['-', '-', '-', '-', '-', '-']         #val[0] -> PWM, val[1] -> czas, ...
+resend = [0, 0, 0, 0, 0, 0]                     #resend[0] -> PWM, resend[1] -> czas, ...
+confirm_need = [0, 0, 0, 0, 0, 0]               #cf[0] -> PWM, cf[1] -> czas, ...
 check_what = ['PWM', 'czas', 'PWM1', 'czas1' , 'MaxI', 'czas_z']     #co należy sprawdzic w bazie danych
 count = 0                                       #licznik
-SQLdata = 0                                     #dane odczytane z bazy danych
+SQLdata = 0                                     #dane odczytane lub zapisywane w bazie SQL
 liczba_parametrow = 6                           #stała wykorzystywana dalej w programie
 
 ### zmienne potrzebne w wypadku kontroli wicej niż jednego mikrokontrolera zgrzewarki
@@ -36,15 +36,18 @@ czas2 = 0                                       #zmienna kolejności czasowej
 #konfiguracja wyj GPIO
 LED1 = 4
 LED2 = 3
+LED_ERROR = 17
 RxTx = 2
 GPIO.setmode(GPIO.BCM)          #Schemat oznacze BCM
 GPIO.setwarnings(False)         #Wylaczenie ostrzezeń
 GPIO.setup(LED1, GPIO.OUT)      #Port 4 jako wyjście LED
 GPIO.setup(LED2, GPIO.OUT)      #Port 3 jako wyjście LED
+GPIO.setup(LED_ERROR, GPIO.OUT)      #Port 3 jako wyjście LED
 GPIO.setup(RxTx, GPIO.OUT)      #Port 2 jako wyjście wyboru RX/TX
-GPIO.output(LED1, 0)            #stan niski na porcie 4
-GPIO.output(LED2, 0)            #stan niski na porcie 4
-GPIO.output(RxTx, 0)            #stan niski na porcie 4
+GPIO.output(LED1, 0)            #stan niski na porcie 4 LED1
+GPIO.output(LED2, 0)            #stan niski na porcie 3 LED2
+GPIO.output(LED_ERROR, 0)       #stan niski na porcie 17 LED_ERROR
+GPIO.output(RxTx, 0)            #stan niski na porcie 2 RX/TX
 
 ### czyszczenie bufora rejestru UART
 def clearUARTbuf():
@@ -220,6 +223,13 @@ def odbierz_przebiegi():
     l_pomiary = 0
     GPIO.output(LED2, 0)    #dioda odbioru danych OFF
 
+def send_data(l_dane = "00000"):
+    GPIO.output(RxTx, 1)        #stan nadawania
+    ser.write(l_dane.encode())  #wyslij dane
+    while(ser.out_waiting):
+        time.sleep(0.000001)
+    time.sleep(0.001)
+    GPIO.output(RxTx, 0)        #stan odbierania
 
 ### MAIN PROGRAM
   # odczyt i obsługa bazy danych
@@ -236,28 +246,17 @@ try:                                    #spróbuj otworzyc interfejs UART
 except:                                 #jeśli się nie udało skończ program i wyświetl info
     print("! Konfiguracja USBtty nieudana, sprawdź ustawienia")
     print("! numer portu USBtty prawdopodobnie sie nie zgadza")
+    GPIO.output(LED_ERROR, 1);
     end = 1
 
-def send_data(l_dane = "00000"):
-    GPIO.output(RxTx, 1)        #stan nadawania
-    ser.write(l_dane.encode())  #wyslij dane
-    while(ser.out_waiting):
-        time.sleep(0.000001)
-    time.sleep(0.001)
-    GPIO.output(RxTx, 0)        #stan odbierania
-
 SQLprepare()    #wyzerowanie bazy danych
-
-print("$ press ENTER to continue")
-#input()
-print("")
 
 while(end == 0):                                                        #jesli inicjalizacja interfejsu UART udana
     #sprawdzanie czy przyszły dane zwrotne w odpowiedzi na dane wyslane do mikrokontrolera
     while(ser.inWaiting()):                                             #jeśli są dane do odczytu z UART
         dataUART = ser.read()                                           #odczytaj jeden bajt danych
         #jesli dane skierowane do mnie i dane oczekiwane dla danego parametru (flaga żądania potwierdzenia)
-        if toMe == 2 and (confirm_need[count] == 1 or confirm_need_START == 1): 
+        if toMe == 2: 
             tab_UART[licznik_UART] = dataUART                       #wpisz dane do tablicy UART
             licznik_UART = licznik_UART + 1                         #inkrementacja licznika odebranych danych
             
@@ -331,6 +330,8 @@ while(end == 0):                                                        #jesli i
             confirm_need_START = 0
             resend_START = 1
         czas1 = czas                    #wyrównanie czasu w celu odliczania od nowa różnicy
+    elif (czas - czas1 >= 2):
+        czas1 = czas
 
         
     #jeśli nie wymagane potwierdzenie odbioru przez uC (confirm_need[count] == 0) i minął oczekiwany czas sprawdź
@@ -394,7 +395,7 @@ while(end == 0):                                                        #jesli i
                     dane = "40000"
                     print("! ERROR. Niepoprawny format danych")
             elif(count == 5):
-                #print("~~~~Count 4~~~~")
+                #print("~~~~Count 5~~~~")
                 if SQLdata < 10 and SQLdata >= 0:
                     dane = "500" + str(SQLdata) + "0"
                 elif SQLdata < 100  and SQLdata > 0:
@@ -453,5 +454,3 @@ while(end == 0):                                                        #jesli i
         czas = 0
         czas1 = 0
         czas2 = 0
-
-GPIO.cleanup()          #zerój ustawienia GPIO

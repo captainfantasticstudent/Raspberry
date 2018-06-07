@@ -36,14 +36,17 @@ czas2 = 0                                       #zmienna kolejności czasowej
 #konfiguracja wyj GPIO
 LED1 = 4
 LED2 = 3
+LED_ERROR = 17
 RxTx = 2
 GPIO.setmode(GPIO.BCM)          #Schemat oznacze BCM
 GPIO.setwarnings(False)         #Wylaczenie ostrzezeń
-GPIO.setup(LED1, GPIO.OUT)      #Port 4 jako wyjście LED
-GPIO.setup(LED2, GPIO.OUT)      #Port 3 jako wyjście LED
+GPIO.setup(LED1, GPIO.OUT)      #Port 4 jako wyjście LED led gotowoci
+GPIO.setup(LED2, GPIO.OUT)      #Port 3 jako wyjście LED odbioru danych
+GPIO.setup(LED_ERROR, GPIO.OUT) #Port 17 jako wyjście LED
 GPIO.setup(RxTx, GPIO.OUT)      #Port 2 jako wyjście wyboru RX/TX
 GPIO.output(LED1, 0)            #stan niski na porcie 4
 GPIO.output(LED2, 0)            #stan niski na porcie 4
+GPIO.output(LED_ERROR, 0)       #stan niski na porcie 17
 GPIO.output(RxTx, 0)            #stan niski na porcie 4
 
 ### czyszczenie bufora rejestru UART
@@ -94,6 +97,7 @@ def SQLread(l_cell = 'PWM', l_uC_id = 'Bb'):
         return l_SQLdata[0][0]              #zwrot elementu odczytanego z bazy danych
     except:
         print("! ERROR. Odczyt z bazy danych nieudany")
+        GPIO.output(LED_ERROR, 1)
         return 0
 
 ### przygotowanie bazy danych
@@ -120,6 +124,7 @@ def SQLprepare():
         l_cnx.close()
     except:
         print("! ERROR. Nieudane otwarcie bazy danych")
+        GPIO.output(LED_ERROR, 1)
 
 ### wpisanie do wskazanego pliku danej wartości
 def wpisz_do_pliku(l_plik = '', l_dane_str = ''):
@@ -241,9 +246,7 @@ except:                                 #jeśli się nie udało skończ program 
 def send_data(l_dane = "00000"):
     GPIO.output(RxTx, 1)        #stan nadawania
     ser.write(l_dane.encode())  #wyslij dane
-    while(ser.out_waiting):
-        time.sleep(0.000001)
-    time.sleep(0.001)
+    time.sleep(0.008)
     GPIO.output(RxTx, 0)        #stan odbierania
 
 SQLprepare()    #wyzerowanie bazy danych
@@ -257,7 +260,7 @@ while(end == 0):                                                        #jesli i
     while(ser.inWaiting()):                                             #jeśli są dane do odczytu z UART
         dataUART = ser.read()                                           #odczytaj jeden bajt danych
         #jesli dane skierowane do mnie i dane oczekiwane dla danego parametru (flaga żądania potwierdzenia)
-        if toMe == 2 and (confirm_need[count] == 1 or confirm_need_START == 1): 
+        if toMe == 2: 
             tab_UART[licznik_UART] = dataUART                       #wpisz dane do tablicy UART
             licznik_UART = licznik_UART + 1                         #inkrementacja licznika odebranych danych
             
@@ -270,6 +273,7 @@ while(end == 0):                                                        #jesli i
                     values[count][0].encode() == tab_UART[2]):
                     print(tab_UART)                                 #wypisz odebrane dane
                     print("# Poprawne przyjcie wysłanych danych przez uC")  #podaj info o poprawności odbioru
+                    GPIO.output(LED_ERROR, 0)
                     clearUARTbuf()                                  #profilaktycznie wyczyść bufor danych
                     licznik_UART = 0                                #zerój licznik bajtów odebranych
                     toMe = 0                                        #zerój zmienną mówiącą o wiadomości skierowanej do mnie
@@ -282,6 +286,7 @@ while(end == 0):                                                        #jesli i
                     send_from = tab_UART[5].decode() + tab_UART[6].decode()     #od jakiego uC odebrano
                     SQLwrite('START', '0', 'Bb')                           #flaga START zerowana w bazie
                     print("$ POPRAWNY START ZGRZEWARKI " + send_from)           #potwierdzenie startu zgrzewarki
+                    GPIO.output(LED_ERROR, 0)
                     odbierz_przebiegi()                                         #przygotuj się do odbioru danych pomiarowych
                     confirm_need_START = 0                                      #zerój flagę żądania potwierdzenia startu
                     clearUARTbuf()                                              #profilaktycznie wyczyść bufor danych
@@ -292,7 +297,7 @@ while(end == 0):                                                        #jesli i
                     SQLwrite('START', '0', 'Bb')                           #flaga START zerowana w bazie
                     print("$ REINICJALIZACJA ZGRZEWARKI")           #potwierdzenie startu zgrzewarki
                     for x in range(liczba_parametrow):
-                        resend(x) = 1
+                        resend[x] = 1
                     clearUARTbuf()                                              #profilaktycznie wyczyść bufor danych
                     licznik_UART = 0                                            #zerój licznik bajtów odebranych
                     toMe = 0                                        #zerój zmienną mówiącą o wiadomości skierowanej do mnie
@@ -324,6 +329,7 @@ while(end == 0):                                                        #jesli i
         toMe = 0                        #flaga danych do mnie profilaktycznie zerowana
         licznik_UART = 0                #zerój profilaktycznie licznik bajtów odebranych
         print("! uC nie odpowiedział")  #info o nie odesłąniu danych zwrotnych
+        GPIO.output(LED_ERROR, 1)
         if(confirm_need[count] == 1):   #jeśli ustawiona flaga rządania potwierdzenia dla PARAMETRU zgrzewania
             resend[count] = 1           #ustaw flagę ponownego wysłania wiadomości
             confirm_need[count] = 0     #zerój flagę żądania potwierdzenia w celu ponownego wysłania danych
@@ -331,7 +337,8 @@ while(end == 0):                                                        #jesli i
             confirm_need_START = 0
             resend_START = 1
         czas1 = czas                    #wyrównanie czasu w celu odliczania od nowa różnicy
-
+    elif (czas - czas1 >= 2):
+        czas1 = czas
         
     #jeśli nie wymagane potwierdzenie odbioru przez uC (confirm_need[count] == 0) i minął oczekiwany czas sprawdź
     #czy komórki w bazie danych nie zostały zaktualizowane
@@ -394,7 +401,7 @@ while(end == 0):                                                        #jesli i
                     dane = "40000"
                     print("! ERROR. Niepoprawny format danych")
             elif(count == 5):
-                #print("~~~~Count 4~~~~")
+                #print("~~~~Count 5~~~~")
                 if SQLdata < 10 and SQLdata >= 0:
                     dane = "500" + str(SQLdata) + "0"
                 elif SQLdata < 100  and SQLdata > 0:
@@ -425,6 +432,7 @@ while(end == 0):                                                        #jesli i
                         and int(values[0]) > 0 and int(values[1]) > 1000 and int(values[2]) > 1999 and int(values[3]) > 2999 and int(values[4]) > 3999 and int(values[5]) > 4999
                         and ((int(values[3]) > (int(values[1]) + 2000)) or int(values[3]) == 3000)):
                         SQLwrite('GOTOWE', '1' , 'Bb')                          #jeśli tak pisz w bazę danych gotowość
+                        GPIO.output(LED_ERROR, 0)
                         GPIO.output(LED1, 1)                                    #dioda gotowości ON
                         if ready == 0:                                          #jeśli flaga gotowości = 0
                             print("$ POTWIERDZENIE GOTOWOSCI ZGRZEWARKI")       #potwierdź gotowość
@@ -435,6 +443,7 @@ while(end == 0):                                                        #jesli i
               
         except:                                                                 #jeśli nieudany odczyt wartości  z bazy danych
             print("! ERROR. Nie wyslano nic do uC")
+            GPIO.output(LED_ERROR, 1)
 
         #sprawdzanie flagi startu na podobnej zasadzie jak wyżej
         if (((SQLread('START', 'Bb') == 1 and SQLread('GOTOWE', 'Bb') == 1) or resend_START == 1) and
